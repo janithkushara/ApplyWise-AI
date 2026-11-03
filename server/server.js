@@ -20,18 +20,13 @@ app.get("/test-db",async(req,res)=>{
         });
     }
 });
+const{errorMiddleware}=require("./middleware/errorMiddleware");
+const applicationRouter=require("./routes/applicationRouter");
+app.use("/api/applications",applicationRouter);
 
-app.get("/applications",async(req,res)=>{
-    try{
-        const {userId}=req.query;
-        const result=await pool.query("SELECT * FROM job_applications WHERE user_id=$1",
-            [userId]
-        );
-        res.status(200).json(result.rows);
-    }catch(error){
-        res.status(500).json("invalid user id")
-    }
-});
+
+
+app.use(errorMiddleware);
 const PORT=process.env.PORT || 5000;
 
 app.listen(PORT,()=>{
