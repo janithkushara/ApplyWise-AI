@@ -4,6 +4,8 @@ require("dotenv").config();
 const pool=require("./db");
 const app=express();
 
+app.use(express.json());
+
 app.get("/test-db",async(req,res)=>{
     try{
         const result=await pool.query("SELECT NOW()");
@@ -22,7 +24,9 @@ app.get("/test-db",async(req,res)=>{
 });
 const{errorMiddleware}=require("./middleware/errorMiddleware");
 const applicationRouter=require("./routes/applicationRouter");
+const authRouter=require("./routes/authRoutes");
 app.use("/api/applications",applicationRouter);
+app.use("/api/auth",authRouter);
 
 
 
