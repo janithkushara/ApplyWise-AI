@@ -1,3 +1,4 @@
+const { z } = require("zod");
 exports.validate = (schema) => {
     return (req, res, next) => {
         const result = schema.safeParse(req.body);
@@ -14,3 +15,4 @@ exports.validate = (schema) => {
         next();
     };
 };
+

@@ -30,7 +30,7 @@ exports.fetchPwnedPasswordRange = async (prefix) => {
         });
         if (!response.ok) {
             const error = new Error("Password verification service unavailable");
-            error.statusCode = 503;
+            error.code = "HIBP_UNAVAILABLE";
             throw error;
         }
         const data = await response.text();
@@ -39,12 +39,12 @@ exports.fetchPwnedPasswordRange = async (prefix) => {
 
     } catch (error) {
 
-        if (error.statusCode === 503) {
+        if (error.code = "HIBP_UNAVAILABLE") {
             throw error;
         }
 
         const serviceError = new Error("Password verification service unavailable");
-        serviceError.statusCode = 503;
+        error.code = "HIBP_UNAVAILABLE";
 
         throw serviceError;
     }
