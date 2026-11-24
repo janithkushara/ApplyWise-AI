@@ -1,6 +1,8 @@
 const pool=require("../db");
 const {checkPasswordCompromised}=require("./passwordBreachService");
 const supabase = require("../config/supabaseClient");
+const supabaseAdmin = require("../config/supabaseAdmin");
+const createRefreshClient = require("../config/supabaseRefreshClient");
 
 
 
@@ -178,40 +180,48 @@ exports.loginUser = async (userData) => {
     };
 };
 
+exports.logoutUser = async (token) => {
 
-
-/** exports.registerUser = async (userData) => {
-
-    const { fullName, email, password } = userData;
-
-    const emailLower=email.toLowerCase();
-    const userExist = await pool.query(
-        "SELECT id FROM users WHERE (email)=$1",
-        [emailLower]
+    const { error } = await supabaseAdmin.auth.admin.signOut(
+        token,
+        "local"
     );
 
-    if (userExist.rows.length > 0) {
-        const error = new Error("User already exists. Use another email.");
-        error.statusCode = 409;
+    if (error) {
         throw error;
     }
-    const result=await checkPasswordCompromised(password);
-    if(result===true){
-        const error = new Error("Choose a different password");
-        error.code = "PASSWORD_COMPROMISED";
-        throw error; 
+
+    return {
+        message: "Logout successful."
     };
-    const saltRounds = 10;
+};
 
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const user = await pool.query(
-    `INSERT INTO users (full_name, email, password_hash)
-     VALUES ($1, $2, $3)
-     RETURNING id, full_name, email`,
-    [fullName, emailLower, hashedPassword]
-    );
-    return user.rows[0];
+exports.refreshUserSession = async (refreshToken) => {
+
+    const supabase = createRefreshClient();
+
+    const { data, error } = await supabase.auth.refreshSession({
+        refresh_token: refreshToken
+    });
+
+    if (error) {
+        throw error;
+    }
+
+    if (!data.session || !data.user) {
+        throw new Error("Unable to refresh session.");
+    }
+
+    return {
+        message: "Session refreshed successfully.",
+        session: {
+            access_token: data.session.access_token,
+            refresh_token: data.session.refresh_token,
+            expires_at: data.session.expires_at,
+            expires_in: data.session.expires_in,
+            token_type: data.session.token_type
+        }
+    };
+};
 
 
-};   **/
-    

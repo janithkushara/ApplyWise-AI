@@ -1,0 +1,10 @@
+SYSTEM WORKFLOW
+
+Register or log in.
+Add the internship to ApplyWise AI.
+Save the company, position, and job description.
+Open the application details.
+Run the AI job match analysis.
+Review the matching skills and areas to improve.
+Generate interview questions.
+Update the application status when an interview is scheduled. 
